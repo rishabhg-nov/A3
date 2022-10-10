@@ -1,0 +1,133 @@
+Script started on 2022-10-10 00:00:54-04:00
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+***********************************************
+(Answer 1)
+# ans1.tsv has graph of all replies in the form "replied id" Tab "replying id"
+***********************************************
+
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ cut -f2,5,6 downloaded_tweets_extend_original_nolf2.tsv | grep "replied_to" | awk -F'\t' '{if($1 != $3) print $3 "\t" $1}' | sort -n > ans1.tsv
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+***********************************************
+(Answer 2)
+# search_file has all userid's who got 3 or more replies. Each line is ended with Tab so that fgrep on ans1.tsv will work
+***********************************************
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ cut -f1 ans1.tsv | uniq -c | sort -nr | awk '{if ($1 > 2) print $2 "\t"}' > search_file
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ fgrep -f search_file ans1.tsv > ans2.tsv
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+***********************************************
+(Answer 3)
+# ans3.hist will have the raw data for histogram. 1st column is number of replies. 2nd column is number of users
+***********************************************
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ cut -f1 ans1.tsv | uniq -c | sort -nr | awk '{if ($1 > 2) print $0}' | awk '{print $1}' | uniq -c | awk '{print $2 " " $1}' | sort -n > ans3.hist
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+***********************************************
+(Answer 4)
+# allReplyHashtags has hashtags and the replied id for all reply tweets. Each line ends with Tab to enable fgrep with search_file
+***********************************************
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ cut -f 4,5,6 downloaded_tweets_extend_original_nolf2.tsv | grep "replied_to" | cut -f 1,3 | awk '{print $1 " " $2 "\t"}' > allReplyHashtags
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+*******
+# next command gets hashtags for reply tweets from only those users who are in search_file (the largest cluster)
+*******
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ fgrep -f search_file allReplyHashtags | awk '{print $1}' > hashtags
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+*******
+# Find the top 30 hashtags in this set in sorted order
+*******
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ cat hashtags | tr ',' '\n' | tr -d '"' | grep -v '^$' | tr '[:upper:]' '[:lower:]' | sort | uniq -c | sort -nr | head -n 30 | awk '{print $2}' | sort > tophashtags
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ cat tophashtags
+ableg
+alboforpm
+auspol
+australia
+ausvotes
+ausvotes2022
+ba2
+bccrss
+brexit
+covid
+covid19
+covidisairborne
+covidisnotover
+diemaskebleibtauf
+fluke_natouch
+gutlessscomo
+johnsonoutday25
+lauterbachbleibt
+lnpcorruptionparty
+lnpdisgrace
+longcovid
+morrison
+nytimes
+omicron
+russia
+sarscov2
+standwithukraine
+ukraine
+zerocovid
+เจ้าแก้มก้อน
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+*******
+# get A2 Q5 answer for overall top hashtags in sorted order
+*******
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ cut -f 4 downloaded_tweets_extend_nolf2.tsv | tr ',' '\n' | tr -d '"' | grep -v '^$' | tr '[:upper:]' '[:lower:]' | sort | uniq -c | sort -nr  | head -n 30 | awk '{print $2}' | sort > overalltophashtags
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ cat overalltophashtags
+ableg
+auspol
+bcpoli
+boycottrussia
+breaking
+cdnpoli
+covid
+covid19
+covidisairborne
+fbpe
+followbackfriday
+genocide
+kyiv
+longcovid
+mariupol
+omicron
+ottawa
+partygate
+pmqs
+putin
+putinhitler
+putinwarcriminal
+russia
+russian
+russiasanctions
+standwithukraine
+stopputinnow
+ukraine
+ukrainian
+เจ้าแก้มก้อน
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+*******
+# diff tophashtags and overall top hashtags
+diff.output has the difference between the top 30 hashtags in replies to the large cluster versus
+top 30 hashtags in all replies.
+The lines starting with "<" are the ones which are present in first set but not in the overall set.
+*******
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ diff tophashtags overalltophashtags > diff.output
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ 
+]0;rishabh@sjsu:~/A3[rishabh@sjsu A3]$ exit
+
+Script done on 2022-10-10 00:06:39-04:00

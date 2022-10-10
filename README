@@ -1,0 +1,25 @@
+
+a3.txt - is the script output file
+
+ans1.tsv is the answer for Q1.
+
+ans2.tsv is the answer for Q2.
+
+ans3.hist is the data file for the histogram.
+1st column is # of replies (x-axis of gnuplot) 
+2nd column is # of users (y-axis of gnuplot).
+
+ans3.png is the screenshot of the histogram from gnuplot.
+For gnuplot, I used xterm and took screenshot on local Mac.
+In gnuplot I set terminal to xterm and then issued:
+> plot "ans3.hist" using 2:xtic(1) with histogram
+
+Following files were temporary files used to store temporary results:
+search_file
+allReplyHashtags
+hashtags
+tophashtags
+overalltophashtags
+diff.output
+
+
